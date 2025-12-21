@@ -1,0 +1,50 @@
+name: Price Scraper
+
+on:
+  # Weekly schedule - every Sunday at 3 AM UTC
+  schedule:
+    - cron: '0 3 * * 0'
+  
+  # Manual trigger from GitHub UI or API
+  workflow_dispatch:
+    inputs:
+      triggered_by:
+        description: 'User ID who triggered the scrape'
+        required: false
+        default: ''
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: scraper/package-lock.json
+
+      - name: Install scraper dependencies
+        working-directory: scraper
+        run: npm ci
+
+      - name: Run price scraper
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          TRIGGERED_BY: ${{ github.event.inputs.triggered_by }}
+        run: node index.js
+
+      - name: Upload error log if exists
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scraper-error-log
+          path: scraper/error.log
+          if-no-files-found: ignore
+

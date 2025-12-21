@@ -1,0 +1,15 @@
+{
+  "name": "sevgi-pricing-scraper",
+  "version": "1.0.0",
+  "description": "Price scraper for Sevgi Pricing",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.47.10",
+    "cheerio": "^1.0.0",
+    "puppeteer": "^23.10.4"
+  }
+}
+
