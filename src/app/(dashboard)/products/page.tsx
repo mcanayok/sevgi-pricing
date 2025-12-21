@@ -14,6 +14,7 @@ import { formatPrice, formatDateShort } from "@/lib/utils"
 import { Plus, Package, ExternalLink } from "lucide-react"
 import Link from "next/link"
 import type { Profile } from "@/types/database"
+import { ImportDialog } from "@/components/import-dialog"
 
 export default async function ProductsPage() {
   const supabase = await createClient()
@@ -54,12 +55,15 @@ export default async function ProductsPage() {
           </p>
         </div>
         {canEdit && (
-          <Link href="/products/new">
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Product
-            </Button>
-          </Link>
+          <div className="flex gap-2">
+            <ImportDialog />
+            <Link href="/products/new">
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Product
+              </Button>
+            </Link>
+          </div>
         )}
       </div>
 
