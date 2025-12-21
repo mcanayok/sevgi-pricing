@@ -134,11 +134,12 @@ export default async function DashboardPage() {
           {recentPrices && recentPrices.length > 0 ? (
             <div className="space-y-4">
               {recentPrices.map((item) => {
-                const productUrl = item.product_urls as {
+                const productUrl = item.product_urls as unknown as {
                   url: string
                   products: { brand: string; name: string }
                   websites: { name: string; domain: string }
-                }
+                } | null
+                if (!productUrl) return null
                 return (
                   <div
                     key={item.id}
@@ -146,10 +147,10 @@ export default async function DashboardPage() {
                   >
                     <div className="min-w-0 flex-1">
                       <p className="font-medium truncate">
-                        {productUrl.products.brand} - {productUrl.products.name}
+                        {productUrl.products?.brand} - {productUrl.products?.name}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        {productUrl.websites.name}
+                        {productUrl.websites?.name}
                       </p>
                     </div>
                     <div className="text-right ml-4">
