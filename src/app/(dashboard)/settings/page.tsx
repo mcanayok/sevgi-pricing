@@ -11,10 +11,9 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { formatDate } from "@/lib/utils"
-import { Settings, Users, RefreshCw, AlertCircle, CheckCircle } from "lucide-react"
+import { RefreshCw, AlertCircle, CheckCircle } from "lucide-react"
 import { TriggerScrapeButton } from "@/components/trigger-scrape-button"
-import { UserDialog } from "@/components/user-dialog"
-import type { Profile, ScrapeJob } from "@/types/database"
+import type { ScrapeJob } from "@/types/database"
 
 export default async function SettingsPage() {
   const supabase = await createClient()
@@ -31,12 +30,6 @@ export default async function SettingsPage() {
     redirect("/dashboard")
   }
 
-  // Fetch all users
-  const { data: users } = await supabase
-    .from("profiles")
-    .select("*")
-    .order("created_at", { ascending: true })
-
   // Fetch recent scrape jobs
   const { data: scrapeJobs } = await supabase
     .from("scrape_jobs")
@@ -50,7 +43,7 @@ export default async function SettingsPage() {
       <div>
         <h1 className="text-3xl font-bold">Settings</h1>
         <p className="text-muted-foreground mt-1">
-          Manage users and scraping configuration
+          Manage scraping configuration
         </p>
       </div>
 
@@ -139,69 +132,6 @@ export default async function SettingsPage() {
               </div>
             )}
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Users Section */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                User Management
-              </CardTitle>
-              <CardDescription>
-                Manage user access and roles
-              </CardDescription>
-            </div>
-            <UserDialog />
-          </div>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>User</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Joined</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {users?.map((u) => (
-                <TableRow key={u.id}>
-                  <TableCell>
-                    <div>
-                      <p className="font-medium">
-                        {u.full_name || u.email.split("@")[0]}
-                      </p>
-                      <p className="text-sm text-muted-foreground">{u.email}</p>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={
-                        u.role === "admin"
-                          ? "default"
-                          : u.role === "editor"
-                          ? "secondary"
-                          : "outline"
-                      }
-                    >
-                      {u.role}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {formatDate(u.created_at)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <UserDialog user={u as Profile} disabled={u.id === profile?.id} />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
         </CardContent>
       </Card>
     </div>
