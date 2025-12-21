@@ -25,7 +25,7 @@ interface SidebarProps {
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Products", href: "/products", icon: Package },
-  { name: "Websites", href: "/websites", icon: Globe },
+  { name: "Brands", href: "/brands", icon: Globe },
   { name: "Settings", href: "/settings", icon: Settings, adminOnly: true },
 ]
 

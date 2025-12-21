@@ -44,7 +44,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         is_active,
         last_price,
         last_scraped_at,
-        website_id,
+        brand_id,
         websites(id, name, domain)
       )
     `)
@@ -81,7 +81,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     is_active: boolean
     last_price: number | null
     last_scraped_at: string | null
-    website_id: string
+    brand_id: string
     websites: { id: string; name: string; domain: string }
   }>
 

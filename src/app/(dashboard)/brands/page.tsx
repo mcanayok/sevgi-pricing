@@ -12,10 +12,10 @@ import {
 } from "@/components/ui/table"
 import { formatDate } from "@/lib/utils"
 import { Plus, Globe, Code } from "lucide-react"
-import { WebsiteDialog } from "@/components/website-dialog"
-import type { Website } from "@/types/database"
+import { BrandDialog } from "@/components/brand-dialog"
+import type { Brand } from "@/types/database"
 
-export default async function WebsitesPage() {
+export default async function BrandsPage() {
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -27,8 +27,8 @@ export default async function WebsitesPage() {
 
   const canEdit = profile?.role === "admin" || profile?.role === "editor"
 
-  const { data: websites } = await supabase
-    .from("websites")
+  const { data: brands } = await supabase
+    .from("brands")
     .select("*")
     .order("is_required", { ascending: false })
     .order("name", { ascending: true })
@@ -38,12 +38,12 @@ export default async function WebsitesPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Websites</h1>
+          <h1 className="text-3xl font-bold">Brands</h1>
           <p className="text-muted-foreground mt-1">
-            Manage tracked websites and their CSS selectors
+            Manage tracked brands and their CSS selectors
           </p>
         </div>
-        {canEdit && <WebsiteDialog />}
+        {canEdit && <BrandDialog />}
       </div>
 
       {/* Info Card */}
@@ -63,20 +63,20 @@ export default async function WebsitesPage() {
         </CardContent>
       </Card>
 
-      {/* Websites Table */}
+      {/* Brands Table */}
       <Card>
         <CardHeader>
-          <CardTitle>All Websites</CardTitle>
+          <CardTitle>All Brands</CardTitle>
           <CardDescription>
-            {websites?.length ?? 0} websites configured
+            {brands?.length ?? 0} brands configured
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {websites && websites.length > 0 ? (
+          {brands && brands.length > 0 ? (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Website</TableHead>
+                  <TableHead>Brand</TableHead>
                   <TableHead>Domain</TableHead>
                   <TableHead>CSS Selector</TableHead>
                   <TableHead>Status</TableHead>
@@ -85,32 +85,32 @@ export default async function WebsitesPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {websites.map((website) => (
-                  <TableRow key={website.id}>
-                    <TableCell className="font-medium">{website.name}</TableCell>
+                {brands.map((brand) => (
+                  <TableRow key={brand.id}>
+                    <TableCell className="font-medium">{brand.name}</TableCell>
                     <TableCell>
                       <code className="text-xs bg-muted px-1.5 py-0.5 rounded">
-                        {website.domain}
+                        {brand.domain}
                       </code>
                     </TableCell>
                     <TableCell>
                       <code className="text-xs bg-muted px-1.5 py-0.5 rounded">
-                        {website.price_selector}
+                        {brand.price_selector}
                       </code>
                     </TableCell>
                     <TableCell>
-                      {website.is_required ? (
+                      {brand.is_required ? (
                         <Badge variant="default">Required</Badge>
                       ) : (
                         <Badge variant="secondary">Optional</Badge>
                       )}
                     </TableCell>
                     <TableCell className="text-muted-foreground text-sm">
-                      {formatDate(website.created_at)}
+                      {formatDate(brand.created_at)}
                     </TableCell>
                     {canEdit && (
                       <TableCell className="text-right">
-                        <WebsiteDialog website={website as Website} />
+                        <BrandDialog brand={brand as Brand} />
                       </TableCell>
                     )}
                   </TableRow>
@@ -120,8 +120,8 @@ export default async function WebsitesPage() {
           ) : (
             <div className="text-center py-12">
               <Globe className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-20" />
-              <p className="text-muted-foreground">No websites configured</p>
-              {canEdit && <WebsiteDialog />}
+              <p className="text-muted-foreground">No brands configured</p>
+              {canEdit && <BrandDialog />}
             </div>
           )}
         </CardContent>

@@ -11,12 +11,12 @@ export default async function DashboardPage() {
   // Fetch stats
   const [
     { count: productsCount },
-    { count: websitesCount },
+    { count: brandsCount },
     { data: latestScrapeJob },
     { data: recentPrices },
   ] = await Promise.all([
     supabase.from("products").select("*", { count: "exact", head: true }),
-    supabase.from("websites").select("*", { count: "exact", head: true }),
+    supabase.from("brands").select("*", { count: "exact", head: true }),
     supabase.from("scrape_jobs").select("*").order("created_at", { ascending: false }).limit(1).single(),
     supabase
       .from("price_history")
@@ -26,8 +26,8 @@ export default async function DashboardPage() {
         scraped_at,
         product_urls!inner(
           url,
-          products!inner(brand, name),
-          websites!inner(name, domain)
+          products!inner(name),
+          brands!inner(name, domain)
         )
       `)
       .order("scraped_at", { ascending: false })
@@ -42,10 +42,10 @@ export default async function DashboardPage() {
       href: "/products",
     },
     {
-      name: "Tracked Websites",
-      value: websitesCount ?? 0,
+      name: "Tracked Brands",
+      value: brandsCount ?? 0,
       icon: Globe,
-      href: "/websites",
+      href: "/brands",
     },
     {
       name: "Last Scrape",
@@ -128,7 +128,7 @@ export default async function DashboardPage() {
       <Card>
         <CardHeader>
           <CardTitle>Recent Price Updates</CardTitle>
-          <CardDescription>Latest scraped prices from all websites</CardDescription>
+          <CardDescription>Latest scraped prices from all brands</CardDescription>
         </CardHeader>
         <CardContent>
           {recentPrices && recentPrices.length > 0 ? (
@@ -136,8 +136,8 @@ export default async function DashboardPage() {
               {recentPrices.map((item) => {
                 const productUrl = item.product_urls as unknown as {
                   url: string
-                  products: { brand: string; name: string }
-                  websites: { name: string; domain: string }
+                  products: { name: string }
+                  brands: { name: string; domain: string }
                 } | null
                 if (!productUrl) return null
                 return (
@@ -147,10 +147,10 @@ export default async function DashboardPage() {
                   >
                     <div className="min-w-0 flex-1">
                       <p className="font-medium truncate">
-                        {productUrl.products?.brand} - {productUrl.products?.name}
+                        {productUrl.products?.name}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        {productUrl.websites?.name}
+                        {productUrl.brands?.name}
                       </p>
                     </div>
                     <div className="text-right ml-4">

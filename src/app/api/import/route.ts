@@ -46,7 +46,7 @@ export async function POST(request: Request) {
 
   // Get Trendyol website ID (required)
   const { data: trendyolWebsite } = await supabase
-    .from("websites")
+    .from("brands")
     .select("id")
     .eq("domain", "trendyol.com")
     .single()
@@ -95,7 +95,7 @@ export async function POST(request: Request) {
       // Add Trendyol URL
       await supabase.from("product_urls").insert({
         product_id: product.id,
-        website_id: trendyolWebsite.id,
+        brand_id: trendyolWebsite.id,
         url: row.trendyol_url.trim(),
       })
 
@@ -110,7 +110,7 @@ export async function POST(request: Request) {
 
         // Check if website exists
         const { data: existingWebsite } = await supabase
-          .from("websites")
+          .from("brands")
           .select("id")
           .eq("domain", domain)
           .single()
@@ -120,7 +120,7 @@ export async function POST(request: Request) {
         } else {
           // Create new website with a placeholder selector
           const { data: newWebsite, error: websiteError } = await supabase
-            .from("websites")
+            .from("brands")
             .insert({
               name: row.website_name.trim(),
               domain: domain,
@@ -142,7 +142,7 @@ export async function POST(request: Request) {
         // Add the product URL
         await supabase.from("product_urls").insert({
           product_id: product.id,
-          website_id: websiteId,
+          brand_id: websiteId,
           url: row.website_url.trim(),
         })
       }

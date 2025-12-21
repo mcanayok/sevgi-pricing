@@ -6,105 +6,86 @@ import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "@/components/ui/use-toast"
-import { ArrowLeft, Plus, Trash2, Loader2 } from "lucide-react"
+import { ArrowLeft, Loader2 } from "lucide-react"
 import Link from "next/link"
-import type { Website } from "@/types/database"
-
-interface ProductUrlInput {
-  website_id: string
-  url: string
-}
+import type { Brand } from "@/types/database"
 
 export default function NewProductPage() {
   const router = useRouter()
   const supabase = createClient()
-  
+
   const [isLoading, setIsLoading] = useState(false)
-  const [websites, setWebsites] = useState<Website[]>([])
-  const [brand, setBrand] = useState("")
+  const [brands, setBrands] = useState<Brand[]>([])
   const [name, setName] = useState("")
-  const [sku, setSku] = useState("")
-  const [notes, setNotes] = useState("")
-  const [urls, setUrls] = useState<ProductUrlInput[]>([])
+  const [requiredBrandUrls, setRequiredBrandUrls] = useState<Record<string, string>>({})
+  const [selectedNonRequiredBrandId, setSelectedNonRequiredBrandId] = useState<string>("")
+  const [nonRequiredBrandUrl, setNonRequiredBrandUrl] = useState("")
 
   useEffect(() => {
-    async function fetchWebsites() {
+    async function fetchBrands() {
       const { data } = await supabase
-        .from("websites")
+        .from("brands")
         .select("*")
         .order("is_required", { ascending: false })
-      
+
       if (data) {
-        setWebsites(data)
-        // Pre-populate required websites
-        const requiredUrls = data
-          .filter((w) => w.is_required)
-          .map((w) => ({ website_id: w.id, url: "" }))
-        setUrls(requiredUrls)
+        setBrands(data)
+        // Initialize required brand URLs
+        const required: Record<string, string> = {}
+        data.filter(b => b.is_required).forEach(b => {
+          required[b.id] = ""
+        })
+        setRequiredBrandUrls(required)
       }
     }
-    fetchWebsites()
+    fetchBrands()
   }, [supabase])
-
-  function addUrl() {
-    const availableWebsites = websites.filter(
-      (w) => !urls.some((u) => u.website_id === w.id)
-    )
-    if (availableWebsites.length > 0) {
-      setUrls([...urls, { website_id: availableWebsites[0].id, url: "" }])
-    }
-  }
-
-  function removeUrl(index: number) {
-    const website = websites.find((w) => w.id === urls[index].website_id)
-    if (website?.is_required) {
-      toast({
-        variant: "destructive",
-        title: "Cannot remove required website",
-        description: `${website.name} is required for all products`,
-      })
-      return
-    }
-    setUrls(urls.filter((_, i) => i !== index))
-  }
-
-  function updateUrl(index: number, field: keyof ProductUrlInput, value: string) {
-    const newUrls = [...urls]
-    newUrls[index] = { ...newUrls[index], [field]: value }
-    setUrls(newUrls)
-  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setIsLoading(true)
 
-    // Validate required URLs
-    const requiredWebsites = websites.filter((w) => w.is_required)
-    for (const rw of requiredWebsites) {
-      const url = urls.find((u) => u.website_id === rw.id)
-      if (!url?.url) {
+    // Validate required brand URLs
+    const requiredBrands = brands.filter(b => b.is_required)
+    for (const brand of requiredBrands) {
+      if (!requiredBrandUrls[brand.id]?.trim()) {
         toast({
           variant: "destructive",
           title: "Missing required URL",
-          description: `Please provide a URL for ${rw.name}`,
+          description: `Please provide a URL for ${brand.name}`,
         })
         setIsLoading(false)
         return
       }
     }
 
+    // Validate non-required brand selection
+    if (!selectedNonRequiredBrandId || !nonRequiredBrandUrl.trim()) {
+      toast({
+        variant: "destructive",
+        title: "Missing brand",
+        description: "Please select a brand and provide its URL",
+      })
+      setIsLoading(false)
+      return
+    }
+
     const { data: { user } } = await supabase.auth.getUser()
 
-    // Create product
+    // Create product (only name and created_by)
     const { data: product, error: productError } = await supabase
       .from("products")
       .insert({
-        brand,
         name,
-        sku: sku || null,
-        notes: notes || null,
         created_by: user?.id,
       })
       .select()
@@ -120,14 +101,26 @@ export default function NewProductPage() {
       return
     }
 
-    // Create product URLs
-    const urlsToInsert = urls
-      .filter((u) => u.url)
-      .map((u) => ({
+    // Insert required brand URLs
+    const urlsToInsert = []
+    for (const [brandId, url] of Object.entries(requiredBrandUrls)) {
+      if (url.trim()) {
+        urlsToInsert.push({
+          product_id: product.id,
+          brand_id: brandId,
+          url: url.trim(),
+        })
+      }
+    }
+
+    // Insert non-required brand URL
+    if (selectedNonRequiredBrandId && nonRequiredBrandUrl.trim()) {
+      urlsToInsert.push({
         product_id: product.id,
-        website_id: u.website_id,
-        url: u.url,
-      }))
+        brand_id: selectedNonRequiredBrandId,
+        url: nonRequiredBrandUrl.trim(),
+      })
+    }
 
     if (urlsToInsert.length > 0) {
       const { error: urlsError } = await supabase
@@ -154,6 +147,9 @@ export default function NewProductPage() {
     router.refresh()
   }
 
+  const requiredBrands = brands.filter(b => b.is_required)
+  const nonRequiredBrands = brands.filter(b => !b.is_required)
+
   return (
     <div className="space-y-6 max-w-2xl">
       {/* Header */}
@@ -172,105 +168,93 @@ export default function NewProductPage() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Basic Info */}
+        {/* Product Name */}
         <Card>
           <CardHeader>
             <CardTitle>Product Information</CardTitle>
-            <CardDescription>Basic details about the product</CardDescription>
+            <CardDescription>Basic product details</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="brand">Brand *</Label>
-                <Input
-                  id="brand"
-                  value={brand}
-                  onChange={(e) => setBrand(e.target.value)}
-                  placeholder="e.g., Fropie"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="name">Product Name *</Label>
-                <Input
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g., Meyve Topları Set"
-                  required
-                />
-              </div>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="sku">SKU (Optional)</Label>
-                <Input
-                  id="sku"
-                  value={sku}
-                  onChange={(e) => setSku(e.target.value)}
-                  placeholder="e.g., FRP-001"
-                />
-              </div>
-            </div>
+          <CardContent>
             <div className="space-y-2">
-              <Label htmlFor="notes">Notes (Optional)</Label>
+              <Label htmlFor="name">Product Name *</Label>
               <Input
-                id="notes"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                placeholder="Any additional notes..."
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g., Meyve Topları Tanışma Seti"
+                required
               />
             </div>
           </CardContent>
         </Card>
 
-        {/* Product URLs */}
+        {/* Required Brand URLs (Marketplaces) */}
         <Card>
           <CardHeader>
-            <CardTitle>Product URLs</CardTitle>
-            <CardDescription>
-              Add links to track prices from different websites
-            </CardDescription>
+            <CardTitle>Marketplace URLs</CardTitle>
+            <CardDescription>URLs for required marketplaces (all products must have these)</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {urls.map((urlInput, index) => {
-              const website = websites.find((w) => w.id === urlInput.website_id)
-              return (
-                <div key={index} className="flex gap-3 items-start">
-                  <div className="flex-1 space-y-2">
-                    <div className="flex items-center gap-2">
-                      <Label>{website?.name}</Label>
-                      {website?.is_required && (
-                        <span className="text-xs text-primary">Required</span>
-                      )}
-                    </div>
-                    <Input
-                      value={urlInput.url}
-                      onChange={(e) => updateUrl(index, "url", e.target.value)}
-                      placeholder={`https://${website?.domain}/...`}
-                      required={website?.is_required}
-                    />
-                  </div>
-                  {!website?.is_required && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="mt-7"
-                      onClick={() => removeUrl(index)}
-                    >
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
-                  )}
-                </div>
-              )
-            })}
+            {requiredBrands.map(brand => (
+              <div key={brand.id} className="space-y-2">
+                <Label htmlFor={`brand-${brand.id}`}>
+                  {brand.name} <span className="text-primary text-xs">*</span>
+                </Label>
+                <Input
+                  id={`brand-${brand.id}`}
+                  value={requiredBrandUrls[brand.id] || ""}
+                  onChange={(e) => setRequiredBrandUrls(prev => ({
+                    ...prev,
+                    [brand.id]: e.target.value
+                  }))}
+                  placeholder={`https://${brand.domain}/...`}
+                  required
+                />
+              </div>
+            ))}
+          </CardContent>
+        </Card>
 
-            {urls.length < websites.length && (
-              <Button type="button" variant="outline" onClick={addUrl}>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Another URL
-              </Button>
+        {/* Non-Required Brand Selection */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Product Brand</CardTitle>
+            <CardDescription>Select the brand that manufactures this product</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="brand-select">Brand *</Label>
+              <Select
+                value={selectedNonRequiredBrandId}
+                onValueChange={setSelectedNonRequiredBrandId}
+                required
+              >
+                <SelectTrigger id="brand-select">
+                  <SelectValue placeholder="Select a brand" />
+                </SelectTrigger>
+                <SelectContent>
+                  {nonRequiredBrands.map(brand => (
+                    <SelectItem key={brand.id} value={brand.id}>
+                      {brand.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {selectedNonRequiredBrandId && (
+              <div className="space-y-2">
+                <Label htmlFor="brand-url">
+                  {nonRequiredBrands.find(b => b.id === selectedNonRequiredBrandId)?.name} URL *
+                </Label>
+                <Input
+                  id="brand-url"
+                  value={nonRequiredBrandUrl}
+                  onChange={(e) => setNonRequiredBrandUrl(e.target.value)}
+                  placeholder={`https://${nonRequiredBrands.find(b => b.id === selectedNonRequiredBrandId)?.domain}/...`}
+                  required
+                />
+              </div>
             )}
           </CardContent>
         </Card>
@@ -297,4 +281,3 @@ export default function NewProductPage() {
     </div>
   )
 }
-

@@ -10,7 +10,7 @@ export interface Profile {
   updated_at: string
 }
 
-export interface Website {
+export interface Brand {
   id: string
   name: string
   domain: string
@@ -23,10 +23,7 @@ export interface Website {
 
 export interface Product {
   id: string
-  brand: string
   name: string
-  sku: string | null
-  notes: string | null
   created_by: string | null
   created_at: string
   updated_at: string
@@ -35,7 +32,7 @@ export interface Product {
 export interface ProductUrl {
   id: string
   product_id: string
-  website_id: string
+  brand_id: string
   url: string
   is_active: boolean
   last_price: number | null
@@ -66,27 +63,24 @@ export interface ScrapeJob {
 
 // Extended types with relations
 export interface ProductWithUrls extends Product {
-  product_urls: (ProductUrl & { website: Website })[]
+  product_urls: (ProductUrl & { brand: Brand })[]
 }
 
 export interface ProductUrlWithDetails extends ProductUrl {
   product: Product
-  website: Website
+  brand: Brand
 }
 
 // View type
 export interface ProductWithPrices {
   id: string
-  brand: string
   name: string
-  sku: string | null
-  notes: string | null
   created_at: string
   updated_at: string
   urls: {
-    website_id: string
-    website_name: string
-    website_domain: string
+    brand_id: string
+    brand_name: string
+    brand_domain: string
     url: string
     is_active: boolean
     last_price: number | null

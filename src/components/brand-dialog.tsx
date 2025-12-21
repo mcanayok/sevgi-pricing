@@ -17,24 +17,24 @@ import {
 } from "@/components/ui/dialog"
 import { toast } from "@/components/ui/use-toast"
 import { Plus, Edit, Loader2, Trash2 } from "lucide-react"
-import type { Website } from "@/types/database"
+import type { Brand } from "@/types/database"
 
-interface WebsiteDialogProps {
-  website?: Website
+interface BrandDialogProps {
+  brand?: Brand
 }
 
-export function WebsiteDialog({ website }: WebsiteDialogProps) {
+export function BrandDialog({ brand }: BrandDialogProps) {
   const router = useRouter()
   const supabase = createClient()
-  const isEditing = !!website
+  const isEditing = !!brand
 
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
-  const [name, setName] = useState(website?.name ?? "")
-  const [domain, setDomain] = useState(website?.domain ?? "")
-  const [priceSelector, setPriceSelector] = useState(website?.price_selector ?? "")
-  const [notes, setNotes] = useState(website?.notes ?? "")
+  const [name, setName] = useState(brand?.name ?? "")
+  const [domain, setDomain] = useState(brand?.domain ?? "")
+  const [priceSelector, setPriceSelector] = useState(brand?.price_selector ?? "")
+  const [notes, setNotes] = useState(brand?.notes ?? "")
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -49,35 +49,35 @@ export function WebsiteDialog({ website }: WebsiteDialogProps) {
 
     if (isEditing) {
       const { error } = await supabase
-        .from("websites")
+        .from("brands")
         .update(data)
-        .eq("id", website.id)
+        .eq("id", brand.id)
 
       if (error) {
         toast({
           variant: "destructive",
-          title: "Error updating website",
+          title: "Error updating brand",
           description: error.message,
         })
         setIsLoading(false)
         return
       }
 
-      toast({ title: "Website updated" })
+      toast({ title: "Brand updated" })
     } else {
-      const { error } = await supabase.from("websites").insert(data)
+      const { error } = await supabase.from("brands").insert(data)
 
       if (error) {
         toast({
           variant: "destructive",
-          title: "Error creating website",
+          title: "Error creating brand",
           description: error.message,
         })
         setIsLoading(false)
         return
       }
 
-      toast({ title: "Website created" })
+      toast({ title: "Brand created" })
     }
 
     setIsLoading(false)
@@ -86,30 +86,30 @@ export function WebsiteDialog({ website }: WebsiteDialogProps) {
   }
 
   async function handleDelete() {
-    if (!website) return
-    
-    if (!confirm(`Are you sure you want to delete "${website.name}"? This will also delete all associated product URLs.`)) {
+    if (!brand) return
+
+    if (!confirm(`Are you sure you want to delete "${brand.name}"? This will also delete all associated product URLs.`)) {
       return
     }
 
     setIsDeleting(true)
 
     const { error } = await supabase
-      .from("websites")
+      .from("brands")
       .delete()
-      .eq("id", website.id)
+      .eq("id", brand.id)
 
     if (error) {
       toast({
         variant: "destructive",
-        title: "Error deleting website",
+        title: "Error deleting brand",
         description: error.message,
       })
       setIsDeleting(false)
       return
     }
 
-    toast({ title: "Website deleted" })
+    toast({ title: "Brand deleted" })
     setIsDeleting(false)
     setOpen(false)
     router.refresh()
@@ -117,11 +117,11 @@ export function WebsiteDialog({ website }: WebsiteDialogProps) {
 
   function handleOpenChange(newOpen: boolean) {
     setOpen(newOpen)
-    if (newOpen && website) {
-      setName(website.name)
-      setDomain(website.domain)
-      setPriceSelector(website.price_selector)
-      setNotes(website.notes ?? "")
+    if (newOpen && brand) {
+      setName(brand.name)
+      setDomain(brand.domain)
+      setPriceSelector(brand.price_selector)
+      setNotes(brand.notes ?? "")
     }
   }
 
@@ -135,17 +135,17 @@ export function WebsiteDialog({ website }: WebsiteDialogProps) {
         ) : (
           <Button>
             <Plus className="h-4 w-4 mr-2" />
-            Add Website
+            Add Brand
           </Button>
         )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{isEditing ? "Edit Website" : "Add Website"}</DialogTitle>
+          <DialogTitle>{isEditing ? "Edit Brand" : "Add Brand"}</DialogTitle>
           <DialogDescription>
             {isEditing
-              ? "Update the website configuration"
-              : "Add a new website to track prices from"}
+              ? "Update the brand configuration"
+              : "Add a new brand to track prices from"}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -188,11 +188,11 @@ export function WebsiteDialog({ website }: WebsiteDialogProps) {
               id="notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Any notes about this website..."
+              placeholder="Any notes about this brand..."
             />
           </div>
           <DialogFooter className="gap-2 sm:gap-0">
-            {isEditing && !website?.is_required && (
+            {isEditing && !brand?.is_required && (
               <Button
                 type="button"
                 variant="destructive"
@@ -216,7 +216,7 @@ export function WebsiteDialog({ website }: WebsiteDialogProps) {
               ) : isEditing ? (
                 "Save Changes"
               ) : (
-                "Add Website"
+                "Add Brand"
               )}
             </Button>
           </DialogFooter>
