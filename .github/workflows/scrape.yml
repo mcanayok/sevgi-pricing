@@ -4,7 +4,7 @@ on:
   # Weekly schedule - every Sunday at 3 AM UTC
   schedule:
     - cron: '0 3 * * 0'
-  
+
   # Manual trigger from GitHub UI or API
   workflow_dispatch:
     inputs:
@@ -20,25 +20,16 @@ on:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    
+    container:
+      image: mcr.microsoft.com/playwright:v1.49.0-jammy
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: scraper/package-lock.json
-
       - name: Install scraper dependencies
         working-directory: scraper
         run: npm ci
-
-      - name: Install Playwright browsers
-        working-directory: scraper
-        run: npx playwright install chromium
 
       - name: Run price scraper
         working-directory: scraper
@@ -56,4 +47,3 @@ jobs:
           name: scraper-error-log
           path: scraper/error.log
           if-no-files-found: ignore
-
