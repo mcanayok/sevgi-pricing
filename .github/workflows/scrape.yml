@@ -31,6 +31,10 @@ jobs:
         working-directory: scraper
         run: npm ci
 
+      - name: Install matching Playwright browsers
+        working-directory: scraper
+        run: npx playwright install chromium
+
       - name: Run price scraper
         working-directory: scraper
         env:
