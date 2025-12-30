@@ -44,6 +44,7 @@ interface ProductUrl {
 interface Product {
   id: string
   name: string
+  slug: string
   category_id: string | null
   subcategory: string | null
   created_at: string
