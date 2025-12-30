@@ -12,6 +12,10 @@ on:
         description: 'User ID who triggered the scrape'
         required: false
         default: ''
+      product_id:
+        description: 'Single product ID to scrape (optional)'
+        required: false
+        default: ''
 
 jobs:
   scrape:
@@ -38,6 +42,7 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           TRIGGERED_BY: ${{ github.event.inputs.triggered_by }}
+          PRODUCT_ID: ${{ github.event.inputs.product_id }}
         run: node index.js
 
       - name: Upload error log if exists
