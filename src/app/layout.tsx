@@ -1,13 +1,8 @@
-import type { Metadata } from "next"
 import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 import "./globals.css"
-import { Toaster } from "@/components/ui/toaster"
-
-export const metadata: Metadata = {
-  title: "Sevgi Pricing",
-  description: "Price tracking dashboard for products across multiple platforms",
-}
+import { Toaster } from "sonner"
+import { QueryProvider } from "@/components/providers/query-provider"
 
 export default function RootLayout({
   children,
@@ -15,10 +10,12 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${GeistSans.variable} ${GeistMono.variable} font-sans antialiased`}>
-        {children}
-        <Toaster />
+    <html lang="en">
+      <body className={`${GeistSans.variable} ${GeistMono.variable} font-sans antialiased bg-gray-50`}>
+        <QueryProvider>
+          {children}
+          <Toaster position="bottom-right" />
+        </QueryProvider>
       </body>
     </html>
   )

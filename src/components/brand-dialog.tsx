@@ -33,7 +33,10 @@ export function BrandDialog({ brand }: BrandDialogProps) {
   const [isDeleting, setIsDeleting] = useState(false)
   const [name, setName] = useState(brand?.name ?? "")
   const [domain, setDomain] = useState(brand?.domain ?? "")
-  const [priceSelector, setPriceSelector] = useState(brand?.price_selector ?? "")
+  const [originalPriceSelector, setOriginalPriceSelector] = useState(brand?.original_price_selector ?? brand?.price_selector ?? "")
+  const [discountPriceSelector, setDiscountPriceSelector] = useState(brand?.discount_price_selector ?? "")
+  const [memberPriceSelector, setMemberPriceSelector] = useState(brand?.member_price_selector ?? "")
+  const [color, setColor] = useState(brand?.color ?? "#64748b")
   const [notes, setNotes] = useState(brand?.notes ?? "")
 
   async function handleSubmit(e: React.FormEvent) {
@@ -43,7 +46,11 @@ export function BrandDialog({ brand }: BrandDialogProps) {
     const data = {
       name,
       domain: domain.replace(/^https?:\/\//, "").replace(/\/$/, ""),
-      price_selector: priceSelector,
+      original_price_selector: originalPriceSelector || null,
+      discount_price_selector: discountPriceSelector || null,
+      member_price_selector: memberPriceSelector || null,
+      price_selector: originalPriceSelector || null, // Keep for backwards compatibility
+      color: color || null,
       notes: notes || null,
     }
 
@@ -120,7 +127,10 @@ export function BrandDialog({ brand }: BrandDialogProps) {
     if (newOpen && brand) {
       setName(brand.name)
       setDomain(brand.domain)
-      setPriceSelector(brand.price_selector)
+      setOriginalPriceSelector(brand.original_price_selector ?? brand.price_selector ?? "")
+      setDiscountPriceSelector(brand.discount_price_selector ?? "")
+      setMemberPriceSelector(brand.member_price_selector ?? "")
+      setColor(brand.color ?? "#64748b")
       setNotes(brand.notes ?? "")
     }
   }
@@ -170,16 +180,64 @@ export function BrandDialog({ brand }: BrandDialogProps) {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="selector">CSS Selector for Price</Label>
+            <Label htmlFor="original-selector">Original Price Selector</Label>
             <Input
-              id="selector"
-              value={priceSelector}
-              onChange={(e) => setPriceSelector(e.target.value)}
-              placeholder="e.g., span.prc-dsc"
+              id="original-selector"
+              value={originalPriceSelector}
+              onChange={(e) => setOriginalPriceSelector(e.target.value)}
+              placeholder="e.g., span.prc-org, .price--original"
               required
             />
             <p className="text-xs text-muted-foreground">
-              Use browser DevTools to find the CSS selector for the price element
+              Comma-separated selectors for original/crossed-out price
+            </p>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="discount-selector">Discount Price Selector (Optional)</Label>
+            <Input
+              id="discount-selector"
+              value={discountPriceSelector}
+              onChange={(e) => setDiscountPriceSelector(e.target.value)}
+              placeholder="e.g., span.discounted, .price--sale"
+            />
+            <p className="text-xs text-muted-foreground">
+              Comma-separated selectors for discounted price
+            </p>
+          </div>
+          {brand?.is_required && (
+            <div className="space-y-2">
+              <Label htmlFor="member-selector">Member/Plus Price Selector (Optional)</Label>
+              <Input
+                id="member-selector"
+                value={memberPriceSelector}
+                onChange={(e) => setMemberPriceSelector(e.target.value)}
+                placeholder="e.g., .ty-plus-price-discounted-price"
+              />
+              <p className="text-xs text-muted-foreground">
+                Comma-separated selectors for member/Plus pricing (Trendyol only)
+              </p>
+            </div>
+          )}
+          <div className="space-y-2">
+            <Label htmlFor="color">Brand Color</Label>
+            <div className="flex gap-2 items-center">
+              <Input
+                id="color"
+                type="color"
+                value={color}
+                onChange={(e) => setColor(e.target.value)}
+                className="w-20 h-10 cursor-pointer"
+              />
+              <Input
+                type="text"
+                value={color}
+                onChange={(e) => setColor(e.target.value)}
+                placeholder="#64748b"
+                className="flex-1"
+              />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Choose a color that matches the brand's identity
             </p>
           </div>
           <div className="space-y-2">

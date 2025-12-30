@@ -31,6 +31,22 @@ yarn-error.log*
 # vercel
 .vercel
 
+# scraper
+scraper/node_modules
+scraper/test-*.js
+scraper/debug-*.js
+scraper/find-*.js
+scraper/quick-*.js
+scraper/*.png
+
+# temp docs
+ACTION_ITEMS.md
+MULTI_PRICE_IMPLEMENTATION.md
+OPTIMIZED_ACTION_PLAN.md
+TECHNICAL_NOTES.md
+TESTING_GUIDE.md
+debug-instructions.md
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

@@ -16,12 +16,15 @@ interface PriceChartProps {
   data: Array<{
     id: string
     price: number | null
+    original_price: number | null
+    discount_price: number | null
+    member_price: number | null
     scraped_at: string
     product_url_id: string
   }>
   urls: Array<{
     id: string
-    websites: { id: string; name: string; domain: string }
+    brands: { id: string; name: string; domain: string; is_required: boolean }
   }>
 }
 
@@ -34,7 +37,7 @@ const COLORS = [
 ]
 
 export function PriceChart({ data, urls }: PriceChartProps) {
-  // Group data by date and website
+  // Group data by date and brand, tracking all price types
   const chartData: Record<string, Record<string, number | null>> = {}
 
   data.forEach((item) => {
@@ -45,7 +48,26 @@ export function PriceChart({ data, urls }: PriceChartProps) {
     if (!chartData[date]) {
       chartData[date] = {}
     }
-    chartData[date][url.websites.name] = item.price
+
+    // Use the effective price (member > discount > original)
+    const effectivePrice = item.member_price || item.discount_price || item.original_price || item.price
+
+    // Store original price if different from effective price
+    if (item.original_price && item.original_price !== effectivePrice) {
+      chartData[date][`${url.brands.name} (Original)`] = item.original_price
+    }
+
+    // Store discount price
+    if (item.discount_price) {
+      chartData[date][`${url.brands.name} (Discount)`] = item.discount_price
+    }
+
+    // Store member price or effective price
+    if (item.member_price) {
+      chartData[date][`${url.brands.name} (Plus)`] = item.member_price
+    } else {
+      chartData[date][url.brands.name] = effectivePrice
+    }
   })
 
   const formattedData = Object.entries(chartData)
@@ -62,6 +84,14 @@ export function PriceChart({ data, urls }: PriceChartProps) {
       </div>
     )
   }
+
+  // Determine which price types exist
+  const priceTypes = new Set<string>()
+  formattedData.forEach((item) => {
+    Object.keys(item).forEach((key) => {
+      if (key !== 'date') priceTypes.add(key)
+    })
+  })
 
   return (
     <ResponsiveContainer width="100%" height={300}>
@@ -88,17 +118,24 @@ export function PriceChart({ data, urls }: PriceChartProps) {
           formatter={(value: number) => [formatPrice(value), ""]}
         />
         <Legend />
-        {urls.map((url, index) => (
-          <Line
-            key={url.id}
-            type="monotone"
-            dataKey={url.websites.name}
-            stroke={COLORS[index % COLORS.length]}
-            strokeWidth={2}
-            dot={{ fill: COLORS[index % COLORS.length], strokeWidth: 0 }}
-            activeDot={{ r: 6 }}
-          />
-        ))}
+        {Array.from(priceTypes).map((priceType, index) => {
+          const isOriginal = priceType.includes('(Original)')
+          const isDiscount = priceType.includes('(Discount)')
+          const isPlus = priceType.includes('(Plus)')
+
+          return (
+            <Line
+              key={priceType}
+              type="monotone"
+              dataKey={priceType}
+              stroke={isOriginal ? "hsl(0, 0%, 50%)" : isPlus ? "hsl(262, 83%, 58%)" : COLORS[index % COLORS.length]}
+              strokeWidth={isOriginal ? 1 : 2}
+              strokeDasharray={isOriginal ? "3 3" : undefined}
+              dot={{ fill: isOriginal ? "hsl(0, 0%, 50%)" : isPlus ? "hsl(262, 83%, 58%)" : COLORS[index % COLORS.length], strokeWidth: 0 }}
+              activeDot={{ r: 6 }}
+            />
+          )
+        })}
       </LineChart>
     </ResponsiveContainer>
   )

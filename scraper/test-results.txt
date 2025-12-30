@@ -1,0 +1,301 @@
+🧪 Testing All Brand Price Selectors
+
+Found 22 brands to test
+
+
+============================================================
+Testing: Zuber (zuber.com)
+URL: https://www.zuber.com/products/yuksek-protein-bar-karma-deneme-paketi
+Selector: asdasdsad
+============================================================
+❌ FAILED: Navigation timeout of 30000 ms exceeded
+
+============================================================
+Testing: Trendyol (trendyol.com)
+URL: https://www.trendyol.com/fellas/protein-granola-kirmizi-meyveler-270g-3-lu-paket-p-313710696?boutiqueId=61&merchantId=121253
+Selector: [data-testid="current-price"], [data-testid="normal-price"] span.discounted, span.discounted
+============================================================
+Raw text: "379 TL"
+✅ SUCCESS: Extracted price: 379 TL
+
+============================================================
+Testing: Fropie (www.fropie.com)
+URL: https://fropie.com.tr/karisik-protein-bar-kutusu---35-g---12-adet
+Selector: .discount-price
+============================================================
+Raw text: "₺ 850.00₺ 510.00"
+✅ SUCCESS: Extracted price: 850 TL
+
+============================================================
+Testing: Fellas (fellasfoods.com.tr)
+URL: https://www.fellasfoods.com.tr/fellas-protein-granola-kirmizi-meyveler
+Selector: .price
+============================================================
+❌ FAILED: Selector not found on page
+
+============================================================
+Testing: Waspco (waspsnacks.com)
+URL: https://waspsnacks.com/collections/protein-bar/products/vegan-protein-bar-karma-paket-40g-x-12-adet-1
+Selector: .price
+============================================================
+❌ FAILED: Selector not found on page
+
+============================================================
+Testing: uniq2go (uniq2go.com.tr)
+URL: https://uniq2go.com.tr/uniq2go-mixpack-16-adet-midi-karisik
+Selector: .price
+============================================================
+❌ FAILED: Selector not found on page
+
+============================================================
+Testing: bahs (bahsbar.com)
+URL: https://www.bahsbar.com/products/whey-protein-bar
+Selector: .price
+============================================================
+Raw text: "
+              İndirimli fiyat1.499TL"
+✅ SUCCESS: Extracted price: 1.499 TL
+
+============================================================
+Testing: Saf (safnutrition.co)
+URL: https://safnutrition.co/products/peanut-chocolate-high-protein-bar-50-gr-x-12
+Selector: .price
+============================================================
+❌ FAILED: Selector not found on page
+
+============================================================
+Testing: Protein Ocean (proteinocean.com)
+URL: https://proteinocean.com/protein-bar?Aroma=Tiramisu&Boyut=8-Adet
+Selector: .price
+============================================================
+❌ FAILED: Selector not found on page
+
+============================================================
+Testing: Rawsome (rawsome.com.tr)
+URL: https://www.rawsome.com.tr/en/collections/rawsome-bar-1/products/ketogenic-friendly-protein-bar-12-adet
+Selector: .price
+============================================================
+❌ FAILED: Selector not found on page
+
+============================================================
+Testing: Delly (dellyshop.com)
+URL: https://www.dellyshop.com/delly-cik.-kapli-protein-bar-karisik-kutu-413
+Selector: .price
+============================================================
+❌ FAILED: Selector not found on page
+
+============================================================
+Testing: Mom's Granola (momsnaturalfoods.com.tr)
+URL: https://momsnaturalfoods.com.tr/3lu-cilek-chia-granola-3x360g
+Selector: .price
+============================================================
+❌ FAILED: Selector not found on page
+
+⚠️  Skipping Kellog's: No product URLs found
+
+============================================================
+Testing: Wefood (wefood.com.tr)
+URL: https://wefood.com.tr/products/glutensiz-granola-kirmizi-meyve-bademli-250-gr-3lu-2
+Selector: .price
+============================================================
+Raw text: "
+  
+      Normal fiyat
+      
+        1,116.00 TL
+      
+    
+    
+      İndirimli fiyat
+      
+        1,116.00 TL
+      
+        Normal fiyat
+        
+          
+            
+              1,116.00 TL
+            
+          
+        
+    
+       
+        Sepette %40 İndirimli
+        669.60 TL
+      
+    
+    
+    
+    
+    
+      Birim fiyat
+      
+        
+        /
+         / 
+        
+        
+      
+    
+   
+        
+          
+          
+        
+        
+          Tükendi
+        
+      "
+✅ SUCCESS: Extracted price: 1116 TL
+
+============================================================
+Testing: Naturiga (naturiga.com)
+URL: https://www.naturiga.com/products/3lu-glutensiz-granola-set-1
+Selector: .price
+============================================================
+❌ FAILED: Selector not found on page
+
+============================================================
+Testing: Yummate (yummate.com)
+URL: -
+Selector: .price
+============================================================
+❌ FAILED: Protocol error (Page.navigate): Cannot navigate to invalid URL
+
+============================================================
+Testing: Vegeat's (vegeats.com)
+URL: web sitesi bozuk
+Selector: .price
+============================================================
+❌ FAILED: Protocol error (Page.navigate): Cannot navigate to invalid URL
+
+============================================================
+Testing: Patiswiss (patiswiss.com.tr)
+URL: https://www.patiswiss.com.tr/products/tutsulenmis-barbeku-aromali-nohut-cips-seti-50g-x-6-adet?_pos=1&_sid=055a0aa46&_ss=r?variant=52226911338810
+Selector: .price
+============================================================
+Raw text: "
+
+  
+          Normal fiyat
+          299.95TL
+        
+"
+✅ SUCCESS: Extracted price: 299.95 TL
+
+============================================================
+Testing: Bite & More (biteandmore.tr)
+URL: https://www.biteandmore.tr/urun/vegan-protein-puff-5-li-tanisma-paketi-50g-x-5-adet
+Selector: .price
+============================================================
+❌ FAILED: Selector not found on page
+
+============================================================
+Testing: Aroha Çikolata (arohacikolata.com)
+URL: https://www.arohacikolata.com/kakaolu-ve-hurmali-findik-kremasi-80-findik-seker-ilavesiz-320-g-pmu310
+Selector: .price
+============================================================
+❌ FAILED: Selector not found on page
+
+============================================================
+Testing: Servet (servet.com)
+URL: https://servet.com/products/seker-ilavesiz-findik-krokan-bar-20-g-6li-paket
+Selector: .price
+============================================================
+❌ FAILED: Selector not found on page
+
+============================================================
+Testing: Corny (corny.com)
+URL: Web sitesinde satış yok.
+Selector: .price
+============================================================
+❌ FAILED: Protocol error (Page.navigate): Cannot navigate to invalid URL
+
+============================================================
+📊 SUMMARY
+============================================================
+
+✅ Working (5):
+   • Trendyol (trendyol.com)
+     Selector: [data-testid="current-price"], [data-testid="normal-price"] span.discounted, span.discounted
+     Price: 379 TL
+   • Fropie (www.fropie.com)
+     Selector: .discount-price
+     Price: 850 TL
+   • bahs (bahsbar.com)
+     Selector: .price
+     Price: 1.499 TL
+   • Wefood (wefood.com.tr)
+     Selector: .price
+     Price: 1116 TL
+   • Patiswiss (patiswiss.com.tr)
+     Selector: .price
+     Price: 299.95 TL
+
+❌ Failing (16):
+   • Zuber (zuber.com)
+     Selector: asdasdsad
+     Error: Navigation timeout of 30000 ms exceeded
+     URL: https://www.zuber.com/products/yuksek-protein-bar-karma-deneme-paketi
+   • Fellas (fellasfoods.com.tr)
+     Selector: .price
+     Error: Selector not found
+     URL: https://www.fellasfoods.com.tr/fellas-protein-granola-kirmizi-meyveler
+   • Waspco (waspsnacks.com)
+     Selector: .price
+     Error: Selector not found
+     URL: https://waspsnacks.com/collections/protein-bar/products/vegan-protein-bar-karma-paket-40g-x-12-adet-1
+   • uniq2go (uniq2go.com.tr)
+     Selector: .price
+     Error: Selector not found
+     URL: https://uniq2go.com.tr/uniq2go-mixpack-16-adet-midi-karisik
+   • Saf (safnutrition.co)
+     Selector: .price
+     Error: Selector not found
+     URL: https://safnutrition.co/products/peanut-chocolate-high-protein-bar-50-gr-x-12
+   • Protein Ocean (proteinocean.com)
+     Selector: .price
+     Error: Selector not found
+     URL: https://proteinocean.com/protein-bar?Aroma=Tiramisu&Boyut=8-Adet
+   • Rawsome (rawsome.com.tr)
+     Selector: .price
+     Error: Selector not found
+     URL: https://www.rawsome.com.tr/en/collections/rawsome-bar-1/products/ketogenic-friendly-protein-bar-12-adet
+   • Delly (dellyshop.com)
+     Selector: .price
+     Error: Selector not found
+     URL: https://www.dellyshop.com/delly-cik.-kapli-protein-bar-karisik-kutu-413
+   • Mom's Granola (momsnaturalfoods.com.tr)
+     Selector: .price
+     Error: Selector not found
+     URL: https://momsnaturalfoods.com.tr/3lu-cilek-chia-granola-3x360g
+   • Naturiga (naturiga.com)
+     Selector: .price
+     Error: Selector not found
+     URL: https://www.naturiga.com/products/3lu-glutensiz-granola-set-1
+   • Yummate (yummate.com)
+     Selector: .price
+     Error: Protocol error (Page.navigate): Cannot navigate to invalid URL
+     URL: -
+   • Vegeat's (vegeats.com)
+     Selector: .price
+     Error: Protocol error (Page.navigate): Cannot navigate to invalid URL
+     URL: web sitesi bozuk
+   • Bite & More (biteandmore.tr)
+     Selector: .price
+     Error: Selector not found
+     URL: https://www.biteandmore.tr/urun/vegan-protein-puff-5-li-tanisma-paketi-50g-x-5-adet
+   • Aroha Çikolata (arohacikolata.com)
+     Selector: .price
+     Error: Selector not found
+     URL: https://www.arohacikolata.com/kakaolu-ve-hurmali-findik-kremasi-80-findik-seker-ilavesiz-320-g-pmu310
+   • Servet (servet.com)
+     Selector: .price
+     Error: Selector not found
+     URL: https://servet.com/products/seker-ilavesiz-findik-krokan-bar-20-g-6li-paket
+   • Corny (corny.com)
+     Selector: .price
+     Error: Protocol error (Page.navigate): Cannot navigate to invalid URL
+     URL: Web sitesinde satış yok.
+
+

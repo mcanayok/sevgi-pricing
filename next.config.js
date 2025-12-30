@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Enable experimental features if needed
+  // Disable typed routes to suppress warnings
+  typedRoutes: false,
 }
 
 module.exports = nextConfig

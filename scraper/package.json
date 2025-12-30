@@ -8,8 +8,8 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.47.10",
+    "@tanstack/react-query-devtools": "^5.91.2",
     "cheerio": "^1.0.0",
-    "puppeteer": "^23.10.4"
+    "playwright": "^1.57.0"
   }
 }
-

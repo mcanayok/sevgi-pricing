@@ -13,10 +13,23 @@ export interface Profile {
 export interface Brand {
   id: string
   name: string
+  slug: string
   domain: string
   price_selector: string
+  original_price_selector: string | null
+  discount_price_selector: string | null
+  member_price_selector: string | null
   is_required: boolean
+  color: string | null
   notes: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface ProductCategory {
+  id: string
+  name: string
+  description: string | null
   created_at: string
   updated_at: string
 }
@@ -24,6 +37,9 @@ export interface Brand {
 export interface Product {
   id: string
   name: string
+  slug: string
+  category_id: string | null
+  subcategory: string | null
   created_by: string | null
   created_at: string
   updated_at: string
@@ -36,6 +52,9 @@ export interface ProductUrl {
   url: string
   is_active: boolean
   last_price: number | null
+  original_price: number | null
+  discount_price: number | null
+  member_price: number | null
   last_scraped_at: string | null
   created_at: string
 }
@@ -44,6 +63,9 @@ export interface PriceHistory {
   id: string
   product_url_id: string
   price: number | null
+  original_price: number | null
+  discount_price: number | null
+  member_price: number | null
   error: string | null
   scraped_at: string
 }
@@ -84,6 +106,9 @@ export interface ProductWithPrices {
     url: string
     is_active: boolean
     last_price: number | null
+    original_price: number | null
+    discount_price: number | null
+    member_price: number | null
     last_scraped_at: string | null
   }[] | null
 }

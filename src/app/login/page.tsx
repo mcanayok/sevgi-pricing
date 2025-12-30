@@ -59,7 +59,7 @@ export default function LoginPage() {
             <TrendingUp className="w-7 h-7 text-primary" />
           </div>
           <div>
-            <CardTitle className="text-2xl font-bold">Sevgi Pricing</CardTitle>
+            <CardTitle className="text-2xl font-bold">Fropie Pricing</CardTitle>
             <CardDescription className="mt-2">
               Price tracking dashboard
             </CardDescription>

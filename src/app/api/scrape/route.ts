@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
+import { exec } from "child_process"
+import { promisify } from "util"
+import path from "path"
+
+const execAsync = promisify(exec)
 
 export async function POST() {
   const supabase = await createClient()
@@ -20,7 +25,48 @@ export async function POST() {
     return NextResponse.json({ error: "Admin access required" }, { status: 403 })
   }
 
-  // Check GitHub configuration
+  const isDev = process.env.NODE_ENV === "development"
+
+  // Development mode: run scraper locally
+  if (isDev) {
+    try {
+      console.log("🔧 Development mode: Running scraper locally...")
+
+      const scraperPath = path.join(process.cwd(), "scraper")
+      const command = `node index.js`
+
+      // Run in background with secure env vars
+      exec(command, {
+        cwd: scraperPath,
+        env: {
+          ...process.env,
+          SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+          SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
+          TRIGGERED_BY: user.id
+        }
+      }, (error, stdout, stderr) => {
+        if (error) {
+          console.error("Scraper error:", error)
+          console.error("stderr:", stderr)
+        } else {
+          console.log("Scraper output:", stdout)
+        }
+      })
+
+      return NextResponse.json({
+        success: true,
+        message: "Scraper started locally. Check terminal for output."
+      })
+    } catch (error) {
+      console.error("Error running scraper:", error)
+      return NextResponse.json(
+        { error: "Failed to start scraper" },
+        { status: 500 }
+      )
+    }
+  }
+
+  // Production mode: trigger GitHub Actions
   const githubToken = process.env.GITHUB_TOKEN
   const githubRepo = process.env.GITHUB_REPO
 
@@ -32,7 +78,6 @@ export async function POST() {
   }
 
   try {
-    // Trigger GitHub Actions workflow
     const [owner, repo] = githubRepo.split("/")
     const response = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/actions/workflows/scrape.yml/dispatches`,
@@ -61,7 +106,6 @@ export async function POST() {
       )
     }
 
-    // Create a scrape job record
     await supabase.from("scrape_jobs").insert({
       status: "pending",
       triggered_by: user.id,

@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { Sidebar } from "@/components/sidebar"
+import { ErrorBoundary } from "@/components/error-boundary"
+import { GlobalSearchHeader } from "@/components/global-search-header"
 import type { Profile } from "@/types/database"
 
 export default async function DashboardLayout({
@@ -29,11 +31,16 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50/30">
       <Sidebar profile={profile as Profile} />
-      <main className="lg:pl-64">
-        <div className="p-6 lg:p-8">{children}</div>
-      </main>
+      <div className="lg:pl-64">
+        <GlobalSearchHeader />
+        <main className="pt-[72px]">
+          <div className="p-6 lg:p-8">
+            <ErrorBoundary>{children}</ErrorBoundary>
+          </div>
+        </main>
+      </div>
     </div>
   )
 }
